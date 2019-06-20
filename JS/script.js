@@ -1,8 +1,9 @@
 // creates background canvas
 
-class backGround {
+class Background {
   constructor() {
     this.image = document.getElementById("play-screen").getContext("2d")
+    this.splatSound = document.getElementById("splat")
     /// values of berd coordinates
     this.x = 100;
     this.y = 50;
@@ -18,9 +19,12 @@ class backGround {
     this.berdIdle = new Image()
     this.berdDancing = new Image()
     this.berdCourage = new Image()
+    this.splatBerd = new Image()
+    this.splatBerd.crossOrigin
     this.berdIdle.crossOrigin
     this.berdDancing.crossOrigin
     this.berdCourage.crossOrigin
+    this.splatBerd.src = "assets/image/splatberd.png"
     this.berdIdle.src = "assets/image/newberd.png"
     this.berdDancing.src = "assets/image/dancingberd.png"
     this.berdCourage.src = "assets/image/courageousberd.png"
@@ -54,7 +58,11 @@ class backGround {
       this.y += 0.4
       this.refresh()
     }
-    else(this.reset())
+    // when berd dies
+    else{
+      this.splat()
+      this.reset()
+    }
   }
   moveUp() {
     if (this.y > 0) {
@@ -88,25 +96,40 @@ class backGround {
   }
   reset(){
     window.cancelAnimationFrame(this.gravityFunc)
-    this.clear()
-    let image = this.image
-    this.x = 100;
-    this.y = 50;
-    this.w = 80;
-    this.h = 20;
-    image.drawImage(this.berdIdle, this.x, this.y, this.w, this.h)
-    image.drawImage(this.berdDancing, 200, 100, 100, 50)
-    image.drawImage(this.berdCourage, 0, 100, 100, 50)
+    //delayed for the game over animation
+    setTimeout(()=>{
+      this.clear()
+      let image = this.image
+      this.x = 100;
+      this.y = 50;
+      this.w = 80;
+      this.h = 20;
+      
+      image.drawImage(this.berdIdle, this.x, this.y, this.w, this.h)
+      image.drawImage(this.berdDancing, 200, 100, 100, 50)
+      image.drawImage(this.berdCourage, 0, 100, 100, 50)
+      console.log("reseted")
+    },1000
+    )
 
     this.isReseted= true
 
   }
+splat(){
+  this.splatBerd = new Image()
+  this.splatBerd.crossOrigin
+  this.splatBerd.src = "assets/image/splatberd.png"
+  this.clear()
+  // this.splatSound.play()
+  this.image.drawImage(this.splatBerd, 100, 120, 100, 30)
+  
 
+}
 }
 class UI {
   // constructor starts the display
   constructor() {
-    this.start = new backGround()
+    this.start = new Background()
     this.start.initialize()
     this.start.gravity()
   }
