@@ -1,3 +1,11 @@
+class Pipe {
+  constructor(){
+  this.x=0;
+  this.y=0;
+  this.w=0;
+  this.h=0;
+  }
+}
 // creates background canvas
 
 class Background {
@@ -9,7 +17,15 @@ class Background {
     this.y = 50;
     this.w = 80;
     this.h = 20;
-    //
+    ///
+    ///values of pipes positions
+
+
+
+
+
+
+
     this.gravityFunc
     this.isReseted = false
     this.isJumping = false
@@ -21,25 +37,31 @@ class Background {
     this.berdDancing = new Image()
     this.berdCourage = new Image()
     this.splatBerd = new Image()
+    this.pipes = new Image
+    this.reversePipe = new Image
     this.splatBerd.crossOrigin
     this.berdIdle.crossOrigin
     this.berdDancing.crossOrigin
     this.berdCourage.crossOrigin
+    this.pipes.crossOrigin
+    this.reversePipe.crossOrigin
     this.splatBerd.src = "assets/image/splatberd.png"
     this.berdIdle.src = "assets/image/newberd.png"
     this.berdDancing.src = "assets/image/dancingberd.png"
     this.berdCourage.src = "assets/image/courageousberd.png"
+    this.pipes.src = "assets/image/pipe.png"
+    this.reversePipe.src = "assets/image/reversepipe"
     this.newpos()
     this.isReseted = false
-
+    
   }
-
-
+  
+  
   ///
   /// Position functions
   ///
   newpos() {
-
+    
     let image = this.image
     let x = this.x;
     let y = this.y;
@@ -48,6 +70,8 @@ class Background {
     image.drawImage(this.berdIdle, x, y, w, h)
     image.drawImage(this.berdDancing, 200, 100, 100, 50)
     image.drawImage(this.berdCourage, 0, 100, 100, 50)
+    let newPipe = this.generatePipes()
+    image.drawImage(this.pipes,newPipe.x,newPipe.y,newPipe.w,newPipe.h)    
 
   }
   speed(){
@@ -78,8 +102,7 @@ class Background {
         this.jumpingDuration = 0
         this.isJumping = false
       }
-      console.log(this.jumpingDuration)
-      console.log(this.isJumping)
+    
       this.refresh()
     }
     // when berd dies
@@ -105,8 +128,13 @@ class Background {
   }
 
   // generates pipe randomly
-  pipes() {
-
+  generatePipes() {
+    let test = new Pipe
+    test.y = 100*Math.random()
+    test.h = 50
+    test.w = 100
+    console.log(test)
+    return test
   }
 
   //
