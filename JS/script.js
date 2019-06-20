@@ -13,7 +13,8 @@ class Background {
     this.gravityFunc
     this.isReseted = false
     this.isJumping = false
-    this.jumpingDuration
+    this.jumpingDuration = 0
+    this.freeFallDuration = 0
   }
   initialize() {
     this.berdIdle = new Image()
@@ -30,8 +31,6 @@ class Background {
     this.berdCourage.src = "assets/image/courageousberd.png"
     this.newpos()
     this.isReseted = false
-
-    /// refreshes every frame new animation
 
   }
 
@@ -51,30 +50,64 @@ class Background {
     image.drawImage(this.berdCourage, 0, 100, 100, 50)
 
   }
-  gravity() {
-    this.gravityFunc = window.requestAnimationFrame(this.gravity.bind(this))
-    
-    if (this.y + this.h < this.image.canvas.height) {
-      this.y += 0.4
+  speed(){
+
+    if (this.y + this.h < this.image.canvas.height && !this.isJumping) {
+      //adds acceleration
+      this.y += 1.5+this.freeFallDuration
+      this.freeFallDuration+= 0.05
+      this.refresh()
+    }
+    //alter speed during jumps
+    else if (this.isJumping) {
+      this.freeFallDuration = 0
+      if (this.jumpingDuration <= 10) {
+        this.y -= 2
+        this.jumpingDuration++
+      }
+      else if (this.jumpingDuration > 10 && this.jumpingDuration <= 20 && this.isJumping == true) {
+        this.y += 0.5
+        this.jumpingDuration++
+        console.log("slow fall")
+      }
+      else if (this.jumpingDuration > 20 && this.jumpingDuration <= 30 && this.isJumping == true) {
+        this.y += 1
+        this.jumpingDuration++
+      }
+      else {
+        this.jumpingDuration = 0
+        this.isJumping = false
+      }
+      console.log(this.jumpingDuration)
+      console.log(this.isJumping)
       this.refresh()
     }
     // when berd dies
-    else{
+    else if (this.y + this.h >= this.image.canvas.height) {
       this.splat()
       this.reset()
     }
   }
-  moveUp() {
-    if (this.y > 0) {
-      this.y -= 10
-      this.refresh()
+  gravity() {
+    this.gravityFunc = window.requestAnimationFrame(this.gravity.bind(this))
+    this.speed()
+  }
+  jump() {
+    if(this.y + this.h > 0){
+    this.isJumping = true
+    this.jumpingDuration = 0
     }
-    if(this.isReseted=== true){
+
+    if (this.isReseted === true) {
       this.initialize()
       this.gravity()
     }
   }
 
+  // generates pipe randomly
+  pipes() {
+
+  }
 
   //
   // display functions
@@ -83,10 +116,12 @@ class Background {
     this.clear()
     this.newpos()
   }
-  
-  hitbox() {
+
+  boxCollide() {
 
   }
+
+
   save() {
     let newX = this.x;
     let newY = this.y;
@@ -94,37 +129,41 @@ class Background {
   clear() {
     this.image.clearRect(0, 0, 1000, 1000)
   }
-  reset(){
+  reset() {
     window.cancelAnimationFrame(this.gravityFunc)
     //delayed for the game over animation
-    setTimeout(()=>{
+    setTimeout(() => {
       this.clear()
       let image = this.image
       this.x = 100;
       this.y = 50;
       this.w = 80;
       this.h = 20;
-      
+
       image.drawImage(this.berdIdle, this.x, this.y, this.w, this.h)
       image.drawImage(this.berdDancing, 200, 100, 100, 50)
       image.drawImage(this.berdCourage, 0, 100, 100, 50)
       console.log("reseted")
-    },1000
+    }, 1000
     )
 
-    this.isReseted= true
+    this.isReseted = true
+    this.isJumping = false
+    this.jumpingDuration = 0
 
   }
-splat(){
-  this.splatBerd = new Image()
-  this.splatBerd.crossOrigin
-  this.splatBerd.src = "assets/image/splatberd.png"
-  this.clear()
-  // this.splatSound.play()
-  this.image.drawImage(this.splatBerd, 100, 120, 100, 30)
-  
+  splat() {
+    this.splatBerd = new Image()
+    this.splatBerd.crossOrigin
+    this.splatBerd.src = "assets/image/splatberd.png"
+    this.clear()
 
-}
+    this.splatSound.currentTime = 0
+    this.splatSound.play()
+    this.image.drawImage(this.splatBerd, 100, 120, 100, 30)
+
+
+  }
 }
 class UI {
   // constructor starts the display
@@ -135,7 +174,7 @@ class UI {
   }
   button() {
     window.addEventListener("keypress", () => {
-      this.start.moveUp()
+      this.start.jump()
     }
     )
   }
