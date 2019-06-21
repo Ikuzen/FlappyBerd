@@ -1,9 +1,43 @@
+// function drawRotated(degrees,context,canvas,image){
+//   context.clearRect(0,0,canvas.width,canvas.height);
+
+//   // save the unrotated context of the canvas so we can restore it later
+//   // the alternative is to untranslate & unrotate after drawing
+//   context.save();
+
+//   // move to the center of the canvas
+//   context.translate(canvas.width/2,canvas.height/2);
+
+//   // rotate the canvas to the specified degrees
+//   context.rotate(degrees*Math.PI/180);
+
+//   // draw the image
+//   // since the context is rotated, the image will be rotated also
+//   context.drawImage(image,-image.width/2,-image.width/2);
+
+//   // we’re done with the rotating so restore the unrotated context
+//   context.restore();
+// }
+
+class UI {
+  // constructor starts the display
+  constructor() {
+    this.start = new Background()
+    this.start.initialize()
+    this.start.animate()
+  }
+  button() {
+    window.addEventListener("keypress", () => {
+      this.start.jump()
+    })
+  }
+}
 class Pipe {
-  constructor(){
-  this.x=0;
-  this.y=0;
-  this.w=0;
-  this.h=0;
+  constructor() {
+    this.x = 0
+    this.y = 100 * Math.random();
+    this.w = 100;
+    this.h = 50;
   }
 }
 // creates background canvas
@@ -19,12 +53,17 @@ class Background {
     this.h = 20;
     ///
     ///values of pipes positions
+    this.px = 0
+    this.py = 100
+    this.pw = 50
+    this.ph = 100
 
-    this.gravityFunc
+    this.play
     this.isReseted = false
     this.isJumping = false
     this.jumpingDuration = 0
     this.freeFallDuration = 0
+    this.pipeDelay = 0
   }
   initialize() {
     this.berdIdle = new Image()
@@ -47,34 +86,39 @@ class Background {
     this.reversePipe.src = "assets/image/reversepipe"
     this.newpos()
     this.isReseted = false
-    
+
   }
-  
-  
+
+
   ///
   /// Position functions
   ///
   newpos() {
-    
+
     let image = this.image
     let x = this.x;
     let y = this.y;
     let w = this.w;
     let h = this.h;
+    
     image.drawImage(this.berdIdle, x, y, w, h)
+    // if(this.isJumping){
+    //   drawRotated(Math.PI,image,this.berdIdle)
+    // }
+  
     image.drawImage(this.berdDancing, 200, 100, 100, 50)
     image.drawImage(this.berdCourage, 0, 100, 100, 50)
-    let newPipe = this.generatePipes()
-    image.drawImage(this.pipe,newPipe.x,newPipe.y,newPipe.w,newPipe.h)    
+    // image.drawImage(this.pipe, this.px, this.py, this.pw, this.ph)
+
 
   }
-  speed(){
+  speed() {
 
     if (this.y + this.h < this.image.canvas.height && !this.isJumping) {
       //adds acceleration
-      this.y += 1.5+this.freeFallDuration
-      this.freeFallDuration+= 0.05
-      this.refresh()
+      this.y += 1.5 + this.freeFallDuration
+      this.freeFallDuration += 0.05
+      
     }
     //alter speed during jumps
     else if (this.isJumping) {
@@ -82,54 +126,61 @@ class Background {
       if (this.jumpingDuration <= 10) {
         this.y -= 2
         this.jumpingDuration++
-      }
-      else if (this.jumpingDuration > 10 && this.jumpingDuration <= 20 && this.isJumping == true) {
+      } else if (this.jumpingDuration > 10 && this.jumpingDuration <= 20 && this.isJumping == true) {
         this.y += 0.5
         this.jumpingDuration++
-        console.log("slow fall")
-      }
-      else if (this.jumpingDuration > 20 && this.jumpingDuration <= 30 && this.isJumping == true) {
+      } else if (this.jumpingDuration > 20 && this.jumpingDuration <= 30 && this.isJumping == true) {
         this.y += 1
         this.jumpingDuration++
-      }
-      else {
+      } else {
         this.jumpingDuration = 0
         this.isJumping = false
       }
-    
-      this.refresh()
+
     }
     // when berd dies
-    else if (this.y + this.h >= this.image.canvas.height) {
+  }
+  animate() {
+    this.play = window.requestAnimationFrame(this.animate.bind(this))
+    this.mvpipe()
+    this.speed()
+    this.refresh()
+    if (this.y + this.h >= this.image.canvas.height) {
       this.splat()
       this.reset()
     }
   }
-  gravity() {
-    this.gravityFunc = window.requestAnimationFrame(this.gravity.bind(this))
-    this.speed()
-  }
   jump() {
-    if(this.y + this.h > 0){
-    this.isJumping = true
-    this.jumpingDuration = 0
+    if (this.y + this.h > 0) {
+      this.isJumping = true
+      this.jumpingDuration = 0
     }
 
     if (this.isReseted === true) {
       this.initialize()
-      this.gravity()
+      this.animate()
     }
   }
 
-  // generates pipe randomly
-  generatePipes() {
-    let test = new Pipe
-    test.y = 100*Math.random()
-    test.h = 50
-    test.w = 100
-    console.log(test)
-    return test
+  mvpipe() {
+    function genpipe(){
+      return new Pipe
+    }
+    // image.drawImage(this.pipe, this.px, this.py, this.pw, this.ph)
+    if(this.pipeDelay===500){
+      this.pipeDelay=0
+      let newPipe = genpipe()
+
+      
+    }
+    this.pipeDelay++
+    
   }
+
+  // generates pipe randomly
+genpipe(){
+  // let newPipe = new Pipe
+}
 
   //
   // display functions
@@ -151,25 +202,25 @@ class Background {
   clear() {
     this.image.clearRect(0, 0, 1000, 1000)
   }
+
   reset() {
-    window.cancelAnimationFrame(this.gravityFunc)
+    window.cancelAnimationFrame(this.play)
     //delayed for the game over animation
     setTimeout(() => {
       this.clear()
-      let image = this.image
       this.x = 100;
       this.y = 50;
       this.w = 80;
       this.h = 20;
 
-      image.drawImage(this.berdIdle, this.x, this.y, this.w, this.h)
-      image.drawImage(this.berdDancing, 200, 100, 100, 50)
-      image.drawImage(this.berdCourage, 0, 100, 100, 50)
-      console.log("reseted")
-    }, 1000
-    )
 
-    this.isReseted = true
+      this.image.drawImage(this.berdIdle, this.x, this.y, this.w, this.h)
+      this.image.drawImage(this.berdDancing, 200, 100, 100, 50)
+      this.image.drawImage(this.berdCourage, 0, 100, 100, 50)
+      this.isReseted = true
+      console.log("reseted")
+    }, 1000)
+
     this.isJumping = false
     this.jumpingDuration = 0
 
@@ -182,23 +233,9 @@ class Background {
 
     this.splatSound.currentTime = 0
     this.splatSound.play()
-    this.image.drawImage(this.splatBerd, 100, 120, 100, 30)
+    this.image.drawImage(this.splatBerd, this.x, this.y, this.w, this.h)
 
 
-  }
-}
-class UI {
-  // constructor starts the display
-  constructor() {
-    this.start = new Background()
-    this.start.initialize()
-    this.start.gravity()
-  }
-  button() {
-    window.addEventListener("keypress", () => {
-      this.start.jump()
-    }
-    )
   }
 }
 
