@@ -2,7 +2,8 @@
       static get spritesb(){
          return Object.freeze({
          pipeUpward: generateImage(50, 200, 'assets/image/pipe.png'),
-         pipeDownward: generateImage(50,200, 'assets/image/reversepipe.png')
+         pipeDownward: generateImage(50,200, 'assets/image/reversepipe.png'),
+         theMonsterInsideThePipe: generateImage(50,100, 'assets/image/dancingberd.png')
       })
     }
       /**
@@ -12,11 +13,11 @@
     */
    constructor(y, pipeType) {
        super(300, y ,50,200);
-
-       if (!['upward','downward'].includes(pipeType)) {
-           throw new Error('pipeType must be upward or downward');
+       if (!['upward','downward','secret'].includes(pipeType)) {
+           throw new Error('pipeType must be upward or downward or secret');
        }
 
        this.pipeType = pipeType
+       this.isScoredPipe = false
    }
 }

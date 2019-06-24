@@ -1,7 +1,3 @@
-// il te faut une classe "gameManager" ou un truc comme
-// ca qui s'occupera de déplacer la vue, de prendre les input du joueur, 
-//d'incrémenter le score, etc
-
 class GameManager {
   constructor() {
     this.score = 0
@@ -13,12 +9,14 @@ class GameManager {
     this.pipeDelay = 0
     this.score = 0
     this.lost = false
-    this.image = document.getElementById("play-screen").getContext("2d")
+    this.playScreen = document.getElementById("play-screen")
+    this.image = this.playScreen.getContext("2d")
     this.splatSound = document.getElementById("splat")
     this.berd = new Berd(50) // accepte seulement initalY comme parametre
     this.score = 0
     this.currentSprite = Berd.sprites.flyingBerd
     this.pipeArray = []
+    this.doom = false
 
   }
   start() {
@@ -37,19 +35,9 @@ class GameManager {
       if (this.pipeDelay >= 100) { // delay of apparition of pipes
         this.addPipe()
         this.pipeDelay = 0
-        this.score++
       }
       // array of pipes that are drawn every frame
-      for (let i in this.pipeArray) {
-        this.mvPipe(this.pipeArray[i])
-        if(this.pipeArray[i].pipeType === "upward"){
-          this.image.drawImage(Pipe.spritesb.pipeUpward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
-        }
-        else if (this.pipeArray[i].pipeType == "downward"){
-          this.image.drawImage(Pipe.spritesb.pipeDownward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
-        }
-        this.pipeCollide(this.pipeArray[i])
-      }
+      this.pipeDisplayer()
       
       if (!this.lost === true) { // stops gravity if lost
         this.gravity()
@@ -120,11 +108,16 @@ class GameManager {
     aPipe.x -= 1.5
   }
   addPipe() {
-    this.pipeArray.push(new Pipe(Math.random()*20+110, "upward"))
-    this.pipeArray.push(new Pipe(Math.random()*(-20)-140, "downward")) 
+    let upRandom = Math.random()*20+110
+    let downRandom = Math.random()*(-20)-140
+    this.pipeArray.push(new Pipe(upRandom, "upward"))
+    this.pipeArray.push(new Pipe(downRandom, "downward")) 
+    if(this.doom){//doom condition
+      this.pipeArray.push(new Pipe(upRandom,"secret"))
+    }
 
   }
-  oobPipe(pipeArr) {
+  oobPipe(pipeArr) { // removes the out of bound pipes from the array
     return pipeArr.filter(elem => elem.x >= -30)
 
   }
@@ -133,10 +126,40 @@ class GameManager {
       this.lose()
     }
   }
+  pipeDisplayer(){
+    for (let i in this.pipeArray) {
+      if(this.pipeArray[i].pipeType === "upward"){
+        this.image.drawImage(Pipe.spritesb.pipeUpward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
+      }
+      else if (this.pipeArray[i].pipeType == "downward"){
+        this.image.drawImage(Pipe.spritesb.pipeDownward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
+      }
+      else if(this.pipeArray[i].pipeType ==="secret"){
+        this.image.drawImage(Pipe.spritesb.theMonsterInsideThePipe,this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, 100)
+        this.pipeArray[i].y -= 1 // makes the monster from the Pipe go out from the pipe
+      }
+      this.mvPipe(this.pipeArray[i])
+      this.pipeCollide(this.pipeArray[i])
+      //score increments if pipe goes behind berd
+      if(this.pipeArray[i].x < this.berd.x && !this.pipeArray[i].isScoredPipe){
+        this.score+= 0.5
+        this.pipeArray[i].isScoredPipe = true
+      }
+      if(this.score === 4 && !this.doom){
+        this.doom = true
+        Berd.audio.hell.play()
+        this.playScreen.style.backgroundImage= "url(../assets/image/uboabackground.png)"
+        console.log(this.image)
+      }
+    }
+  }
 
   reset() {
     this.pipeArray = []
     this.clear()
     this.score = 0
+    this.doom = 0
+    this.playScreen.style.backgroundImage= "url(../assets/image/background-flappy.png)"
+
   }
 }
