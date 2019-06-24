@@ -8,7 +8,12 @@ function animate() {
 }
 animate()
 window.addEventListener("keypress",()=>{
-  game.jump()
-  game.start()
+  if(game.isStarted==false){
+    game.start()
+  }
+  else{
+    game.jump()
+
+}
 }
 )

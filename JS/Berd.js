@@ -14,7 +14,8 @@ class Berd extends TangibleElement {
   }
   static get audio(){
     return Object.freeze({
-      splatSound: generateSound('assets/sound/Cartoon-splat-sound effect.mp3')
+      splatSound: generateSound('assets/sound/Cartoon-splat-sound effect.mp3'),
+      jumpSound : generateSound('assets/sound/Mario-Jump.wav')
     })
   }
   

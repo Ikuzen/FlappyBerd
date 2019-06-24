@@ -58,16 +58,19 @@ class GameManager {
       this.pipeDelay++;
     }
     this.image.drawImage(this.currentSprite, this.berd.x, this.berd.y, this.berd.w, this.berd.h)
-    this.image.fillText(this.score,130,20)
+    this.image.fillText(this.score,130,20,100,100)
+    this.jumpingDuration++
+
 
   }
   gravity() {
     this.berd.y += 1.5
   }
   jump() {
-    if (!this.lost && this.berd.y > 0) {
+    if (!this.lost && this.berd.y > 0 && this.isStarted) {
       this.isJumping = true
       this.jumpingDuration = 0
+      Berd.audio.jumpSound.play()
     }
   }
   jumping() {
@@ -75,19 +78,21 @@ class GameManager {
     if (this.isJumping) {
       if (this.jumpingDuration <= 10) {
         this.berd.y -= 4
-        this.jumpingDuration++
         this.currentSprite = Berd.sprites.jumpingBerd
       } else if (this.jumpingDuration > 10 && this.jumpingDuration <= 15 && this.isJumping == true) {
         this.berd.y -= 2
-        this.jumpingDuration++
-        this.currentSprite = Berd.sprites.fallingBerd1
+        this.currentSprite = Berd.sprites.flyingBerd
+      }
+    else if (this.jumpingDuration > 15 && this.jumpingDuration <= 25 && this.isJumping == true) {
+      this.currentSprite = Berd.sprites.fallingBerd1
+    }
 
-      } else {
+       else if(this.jumpingDuration > 25){
         this.currentSprite = Berd.sprites.fallingBerd2
-
         this.jumpingDuration = 0
         this.isJumping = false
       }
+    
     }
 
   }
@@ -111,10 +116,6 @@ class GameManager {
     this.currentSprite = Berd.sprites.splatBerd
     Berd.audio.splatSound.play()
   }
-  newPipe() {
-    let pipe = new Pipe(100, "upward")
-
-  }
   mvPipe(aPipe) {
     aPipe.x -= 1.5
   }
@@ -133,9 +134,6 @@ class GameManager {
     }
   }
 
-  score(){
-
-  }
   reset() {
     this.pipeArray = []
     this.clear()
