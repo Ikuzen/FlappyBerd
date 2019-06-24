@@ -37,7 +37,6 @@ class GameManager {
       if (this.pipeDelay >= 100) { // delay of apparition of pipes
         this.addPipe()
         this.pipeDelay = 0
-        console.log(this.berd)
         this.score++
       }
       // array of pipes that are drawn every frame
