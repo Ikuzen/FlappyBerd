@@ -16,6 +16,7 @@ class GameManager {
     this.image = document.getElementById("play-screen").getContext("2d")
     this.splatSound = document.getElementById("splat")
     this.berd = new Berd(50) // accepte seulement initalY comme parametre
+    this.score = 0
     this.currentSprite = Berd.sprites.flyingBerd
     this.pipeArray = []
 
@@ -33,9 +34,11 @@ class GameManager {
       this.clear()
       this.jumping()
       this.checkLose()
-      if (this.pipeDelay >= 100) {
+      if (this.pipeDelay >= 100) { // delay of apparition of pipes
         this.addPipe()
         this.pipeDelay = 0
+        console.log(this.berd)
+        this.score++
       }
       // array of pipes that are drawn every frame
       for (let i in this.pipeArray) {
@@ -46,6 +49,7 @@ class GameManager {
         else if (this.pipeArray[i].pipeType == "downward"){
           this.image.drawImage(Pipe.spritesb.pipeDownward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
         }
+        this.pipeCollide(this.pipeArray[i])
       }
       
       if (!this.lost === true) { // stops gravity if lost
@@ -55,6 +59,7 @@ class GameManager {
       this.pipeDelay++;
     }
     this.image.drawImage(this.currentSprite, this.berd.x, this.berd.y, this.berd.w, this.berd.h)
+    this.image.fillText(this.score,130,20)
 
   }
   gravity() {
@@ -115,13 +120,18 @@ class GameManager {
     aPipe.x -= 1.5
   }
   addPipe() {
-    this.pipeArray.push(new Pipe(Math.random()*40+100, "upward"))
-    this.pipeArray.push(new Pipe(Math.random()*(-40)-120, "downward")) 
+    this.pipeArray.push(new Pipe(Math.random()*20+110, "upward"))
+    this.pipeArray.push(new Pipe(Math.random()*(-20)-140, "downward")) 
 
   }
   oobPipe(pipeArr) {
     return pipeArr.filter(elem => elem.x >= -30)
 
+  }
+  pipeCollide(pipe){
+    if(this.berd.x+10 < pipe.x+pipe.w && this.berd.x+this.berd.w-10 > pipe.x && this.berd.y+10 < pipe.y+pipe.h && this.berd.y+this.berd.h-10 > pipe.y){
+      this.lose()
+    }
   }
 
   score(){
