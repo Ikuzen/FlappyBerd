@@ -1,4 +1,72 @@
 
+
+this.berdIdle = new Image()
+this.image = document.getElementById("play-screen").getContext("2d")
+this.splatSound = document.getElementById("splat")
+    this.berdDancing = new Image()
+    this.berdCourage = new Image()
+    this.splatBerd = new Image()
+    this.pipe = new Image()
+    this.reversePipe = new Image()
+    this.splatBerd.crossOrigin
+    this.berdIdle.crossOrigin
+    this.berdDancing.crossOrigin
+    this.berdCourage.crossOrigin
+    this.pipe.crossOrigin
+    this.reversePipe.crossOrigin
+    this.splatBerd.src = "assets/image/splatberd.png"
+    this.berdIdle.src = "assets/image/newberd.png"
+    this.berdDancing.src = "assets/image/dancingberd.png"
+    this.berdCourage.src = "assets/image/courageousberd.png"
+    this.pipe.src = "assets/image/pipe.png"
+    this.reversePipe.src = "assets/image/reversepipe"
+
+
+class Element{
+  constructor(){
+    this.x = 100;
+    this.y = 50;
+    this.w = 80;
+    this.h = 20;
+  }
+  
+}
+
+class Bird extends Element{
+  constructor() {
+    this.image = document.getElementById("play-screen").getContext("2d")
+    this.splatSound = document.getElementById("splat")
+    /// values of berd coordinates
+    
+}
+}
+class Pipe extends Element{
+    static sprites = Object.freeze({
+       sprite1: generateImage(10, 10, 'srarsar'),
+    })
+    constructor(gapSize = 10, gapYOffset=5) {
+       this.gapSize = gapSize;
+       this.gapYOffset = gapYOffset;
+       this.y = 0;
+    } 
+}
+
+
+class Fall{
+
+}
+class Jump{
+
+}
+
+class Move{
+
+}
+
+
+
+
+
 class UI {
   // constructor starts the display
   constructor() {
@@ -44,6 +112,7 @@ class Background {
     this.jumpingDuration = 0
     this.freeFallDuration = 0
     this.pipeDelay = 0
+    this.rotate = (deg)=>{
 
     }
   }
@@ -87,7 +156,7 @@ class Background {
     // if(this.isJumping){
     //   drawRotated(Math.PI,image,this.berdIdle)
     // }
-    console.log(this.berdIdle)
+  
     image.drawImage(this.berdDancing, 200, 100, 100, 50)
     image.drawImage(this.berdCourage, 0, 100, 100, 50)
     // image.drawImage(this.pipe, this.px, this.py, this.pw, this.ph)
@@ -201,7 +270,7 @@ genpipe(){
     setTimeout(() => {
       this.clear()
       this.x = 100;
-      this.y = 0-20/2;
+      this.y = 50;
       this.w = 80;
       this.h = 20;
 
