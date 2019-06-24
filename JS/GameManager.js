@@ -11,6 +11,7 @@ class GameManager {
     this.freeFallDuration = 0
     this.jumpingDuration = 0
     this.pipeDelay = 0
+    this.score = 0
     this.lost = false
     this.image = document.getElementById("play-screen").getContext("2d")
     this.splatSound = document.getElementById("splat")
@@ -35,14 +36,12 @@ class GameManager {
       if (this.pipeDelay >= 100) {
         this.addPipe()
         this.pipeDelay = 0
-        console.log(this.pipeArray)
       }
       // array of pipes that are drawn every frame
       for (let i in this.pipeArray) {
-        this.oobPipe(this.pipeArray[i])
         this.mvPipe(this.pipeArray[i])
         if(this.pipeArray[i].pipeType === "upward"){
-        this.image.drawImage(Pipe.spritesb.pipeUpward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
+          this.image.drawImage(Pipe.spritesb.pipeUpward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
         }
         else if (this.pipeArray[i].pipeType == "downward"){
           this.image.drawImage(Pipe.spritesb.pipeDownward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
@@ -52,6 +51,7 @@ class GameManager {
       if (!this.lost === true) { // stops gravity if lost
         this.gravity()
       }
+      this.pipeArray = this.oobPipe(this.pipeArray)
       this.pipeDelay++;
     }
     this.image.drawImage(this.currentSprite, this.berd.x, this.berd.y, this.berd.w, this.berd.h)
@@ -89,15 +89,19 @@ class GameManager {
   }
   checkLose() { // when lose : lost is true, started is
     if (this.berd.y >= 130 && this.lost === false) {
-      this.splat()
+      this.lose()
+    }
+  }
+  lose(){
+    this.splat()
       this.lost = true
       this.isStarted = false
       setTimeout(() => {
         this.lost = false
         this.berd.y = 50
         this.currentSprite = Berd.sprites.flyingBerd
+        this.reset()
       }, 1500)
-    }
   }
   splat() {
     this.currentSprite = Berd.sprites.splatBerd
@@ -111,16 +115,21 @@ class GameManager {
     aPipe.x -= 1.5
   }
   addPipe() {
-    this.pipeArray.push(new Pipe(Math.random()*40+70, "upward"))
-    this.pipeArray.push(new Pipe(-170, "downward"))
+    this.pipeArray.push(new Pipe(Math.random()*40+100, "upward"))
+    this.pipeArray.push(new Pipe(Math.random()*(-40)-120, "downward")) 
 
   }
-  oobPipe(aPipe) {
-    if (aPipe.x === 0) {
-      this.pipeArray.pop()
-    }
+  oobPipe(pipeArr) {
+    return pipeArr.filter(elem => elem.x >= -30)
+
+  }
+
+  score(){
+
   }
   reset() {
-
+    this.pipeArray = []
+    this.clear()
+    this.score = 0
   }
 }
