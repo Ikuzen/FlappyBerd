@@ -12,17 +12,18 @@ class GameManager {
     this.playScreen = document.getElementById("play-screen")
     this.image = this.playScreen.getContext("2d")
     this.splatSound = document.getElementById("splat")
-    this.berd = new Berd(50) // accepte seulement initalY comme parametre
+    this.berd = new Berd(50) 
     this.score = 0
     this.currentSprite = Berd.sprites.flyingBerd
     this.pipeArray = []
     this.doom = false
 
   }
+  //////////
+  //action functions
+  //////////
   start() {
     this.isStarted = true
-
-
   }
   clear() {
     this.image.clearRect(0, 0, 1000, 1000)
@@ -48,12 +49,12 @@ class GameManager {
     this.image.drawImage(this.currentSprite, this.berd.x, this.berd.y, this.berd.w, this.berd.h)
     this.image.fillText(this.score,130,20,100,100)
     this.jumpingDuration++
-
-
   }
+
   gravity() {
     this.berd.y += 1.5
   }
+
   jump() {
     if (!this.lost && this.berd.y > 0 && this.isStarted) {
       this.isJumping = true
@@ -61,6 +62,7 @@ class GameManager {
       Berd.audio.jumpSound.play()
     }
   }
+
   jumping() {
     this.freeFallDuration = 0
     if (this.isJumping) {
@@ -108,8 +110,11 @@ class GameManager {
     aPipe.x -= 1.5
   }
   addPipe() {
-    let upRandom = Math.random()*20+110
-    let downRandom = Math.random()*(-20)-140
+    let downRandom = Math.random()*(-40)-100
+    let upRandom = downRandom+100*2+50  // keeps a gap of 50
+    console.log(downRandom)
+    console.log(upRandom)
+    // let upRandom = Math.random()*20+110
     this.pipeArray.push(new Pipe(upRandom, "upward"))
     this.pipeArray.push(new Pipe(downRandom, "downward")) 
     if(this.doom){//doom condition
@@ -122,7 +127,7 @@ class GameManager {
 
   }
   pipeCollide(pipe){
-    if(this.berd.x+10 < pipe.x+pipe.w && this.berd.x+this.berd.w-10 > pipe.x && this.berd.y+10 < pipe.y+pipe.h && this.berd.y+this.berd.h-10 > pipe.y){
+    if(checkIntersection(this.berd,pipe)){
       this.lose()
     }
   }
@@ -135,8 +140,8 @@ class GameManager {
         this.image.drawImage(Pipe.spritesb.pipeDownward, this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, this.pipeArray[i].h)
       }
       else if(this.pipeArray[i].pipeType ==="secret"){
-        this.image.drawImage(Pipe.spritesb.theMonsterInsideThePipe,this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w, 100)
-        this.pipeArray[i].y -= 1 // makes the monster from the Pipe go out from the pipe
+        this.image.drawImage(Pipe.spritesb.theMonsterInsideThePipe,this.pipeArray[i].x, this.pipeArray[i].y, this.pipeArray[i].w+50, 100)
+        this.pipeArray[i].y -= 0.5 // makes the monster from the Pipe go out from the pipe
       }
       this.mvPipe(this.pipeArray[i])
       this.pipeCollide(this.pipeArray[i])
@@ -149,7 +154,6 @@ class GameManager {
         this.doom = true
         Berd.audio.hell.play()
         this.playScreen.style.backgroundImage= "url(../assets/image/uboabackground.png)"
-        console.log(this.image)
       }
     }
   }
