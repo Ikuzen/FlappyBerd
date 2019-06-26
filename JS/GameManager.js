@@ -54,9 +54,9 @@ class GameManager {
 
   gravity() {
     
-    this.berd.y += 1.5+this.freeFallDuration/15
+    this.berd.y += 1.5+this.freeFallDuration/50
     this.freeFallDuration++
-    if(this.isJumping && this.isInvincible){
+    if(this.isJumping || this.isInvincible){
       this.freeFallDuration = 0
     }
     
