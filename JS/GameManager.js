@@ -142,7 +142,7 @@ class GameManager {
 
   }
   oobPipe(pipeArr) { // removes the out of bound pipes from the array
-    return pipeArr.filter(elem => elem.x >= -30)
+    return pipeArr.filter(elem => elem.x >= -100)
 
   }
   pipeCollide(pipe) {
