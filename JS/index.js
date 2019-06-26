@@ -23,3 +23,13 @@ $(window).keypress(function (e) {
     game.superBerd()
   }
 })
+$(window).click(function(e){
+  e.preventDefault()
+  if (game.isStarted == false) {
+    game.start()
+  }
+  else {
+    game.jump()
+
+  }
+})
