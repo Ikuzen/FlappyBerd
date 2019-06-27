@@ -22,7 +22,7 @@ class Berd extends TangibleElement {
   }
   
   constructor(initialY) {
-    super(100, initialY,80,20);
+    super(50, initialY,80,20);
 
     this.freeFallDuration = 0
     this.jumpingDuration = 0
